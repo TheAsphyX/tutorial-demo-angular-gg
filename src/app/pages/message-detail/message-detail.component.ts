@@ -4,6 +4,7 @@ import { catchError, interval, map, Observable, switchMap, take, tap } from 'rxj
 import { Message } from 'src/app/model/message';
 import { MessageService } from 'src/app/services/message.service';
 import { fromEvent } from 'rxjs';
+import { TitleService } from 'src/app/services/title.service';
 
 @Component({
   selector: 'app-message-detail',
@@ -17,7 +18,8 @@ export class MessageDetailComponent implements OnInit {
   constructor(
     private readonly route: ActivatedRoute,
     private readonly messageService: MessageService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly titleService: TitleService
     ) { }
 
   ngOnInit(): void {
@@ -25,10 +27,10 @@ export class MessageDetailComponent implements OnInit {
     fromEvent(document, 'click').subscribe(() => console.log('Clicked!'));
 
     
-const observable = new Observable((subscriber) => {
-  subscriber.next(10);
-  subscriber.next(20);
-}); 
+      const observable = new Observable((subscriber) => {
+        subscriber.next(10);
+        subscriber.next(20);
+      }); 
  
 observable.subscribe(x => console.log(x));
 
@@ -44,10 +46,14 @@ observable.subscribe(x => console.log(x));
       .pipe(
         switchMap(params => this.messageService.get(+params['id'])),
         catchError(err => {
+          console.error('sbagliato '+err)
           this.router.navigate(['/']);
           throw err;
         }),
-        map((message: Message) => this.message = message)
+        map((message: Message) =>{
+          this.titleService.title.next(`Messaggio ${message.id}`);
+          this.message = message;
+        } )
       )
       .subscribe();
 
