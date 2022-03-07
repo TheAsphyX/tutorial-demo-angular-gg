@@ -10,6 +10,7 @@ export const ACCESS_TOKEN = 'demo-access-store';
 export class AuthenticationService {
 
   private authentication?: Authentication;
+  user: string='';
 
   constructor() {
     const stored = localStorage.getItem(ACCESS_TOKEN);
@@ -22,10 +23,15 @@ export class AuthenticationService {
     return this.authentication;
   }
 
+  getUsername(): string {
+    return this.user;
+  }
+ 
   login(username: string): Observable<void> {
     const loginDate = new Date();
     const expirationDate = new Date(loginDate.getTime() + (60 * 60000));  // 1 ora
     this.authentication = { username, loginDate, expirationDate };
+    this.user = username;
     return of(localStorage.setItem(ACCESS_TOKEN, JSON.stringify(this.authentication)));
   }
 
