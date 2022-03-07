@@ -10,12 +10,17 @@ import { AuthenticationService } from '../services/authentication.service';
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.scss']
 })
+
 export class NavigationComponent implements OnInit {
 
   title: string = '';
   user: string='';
-  auth?: Authentication;
-    
+  auth: Authentication= {
+    username: '',
+    loginDate: new Date,
+    expirationDate: new Date
+  };
+
 
   constructor(
     private readonly titleService: TitleService,
@@ -36,8 +41,10 @@ export class NavigationComponent implements OnInit {
       )
       .subscribe();
 
-      this.auth = this.authenticationService.getAuthentication();
-      this.user = this.auth?.username!;
+      this.auth = this.authenticationService.getAuthentication() as Authentication;
+
+      this.user = this.auth.username;
+     
     
   }
 
