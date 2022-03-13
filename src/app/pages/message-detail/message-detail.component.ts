@@ -20,40 +20,40 @@ export class MessageDetailComponent implements OnInit {
     private readonly messageService: MessageService,
     private readonly router: Router,
     private readonly titleService: TitleService
-    ) { }
+  ) { }
 
   ngOnInit(): void {
 
     fromEvent(document, 'click').subscribe(() => console.log('Clicked!'));
 
-    
-      const observable = new Observable((subscriber) => {
-        subscriber.next(10);
-        subscriber.next(20);
-      }); 
- 
-observable.subscribe(x => console.log(x));
+
+    const observable = new Observable((subscriber) => {
+      subscriber.next(10);
+      subscriber.next(20);
+    });
+
+    observable.subscribe(x => console.log(x));
 
     const obs = interval(500)
-           .pipe(
-               take(5),
-               map(i => 2 * i ) 
-           );
+      .pipe(
+        take(5),
+        map(i => 2 * i)
+      );
 
-           obs.subscribe(x => console.log(x))
+    obs.subscribe(x => console.log(x))
 
     this.route.params
       .pipe(
         switchMap(params => this.messageService.get(+params['id'])),
         catchError(err => {
-          console.error('sbagliato '+err)
+          console.error('sbagliato ' + err)
           this.router.navigate(['/']);
           throw err;
         }),
-        map((message: Message) =>{
+        map((message: Message) => {
           this.titleService.title.next(`Messaggio ${message.id}`);
           this.message = message;
-        } )
+        })
       )
       .subscribe();
 
@@ -70,5 +70,24 @@ observable.subscribe(x => console.log(x));
         err => console.error(err)
       );
   }
+
+  //con nuova sintassi per subscribe
+  edit(message: Message): void {
+    this.messageService.edit(message.id)
+      .subscribe({
+        complete: () => {
+          console.log(`${message.title} messaggio editato!`);
+          this.router.navigate(['/']);
+
+        },
+        error: () => {
+          console.error('editing in errore : '+this)
+        }
+      });
+  }
+
+
+
+
 
 }

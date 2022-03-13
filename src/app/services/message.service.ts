@@ -44,6 +44,13 @@ export class MessageService {
     return throwError(`Messaggio con id ${id} non trovato!`);
   }
 
+  edit(id: number): Observable<void> {
+    console.log('Nel servizio di editing!');
+    return throwError(`Messaggio con id ${id} non trovato!`);
+  }
+
+
+
   private save(messages: Message[]): Message[] {
     localStorage.setItem(DEMO_MESSAGES_STORE, JSON.stringify(messages));
     return messages;
